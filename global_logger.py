@@ -3,7 +3,7 @@ import sys
 from os import path, mkdir
 
 basedir = path.abspath(path.dirname(__file__))
-local = '/documents/dev/' in basedir.lower()
+local = '/documents/dev/' in basedir.lower() or 'pycharm' in basedir.lower()
 
 # initialize logging
 if local:
@@ -12,16 +12,17 @@ if local:
         mkdir(log_dir)
     log_file = '{dir}/syslog.log'.format(dir=log_dir)
 
-    logging.basicConfig(filename=log_file, level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S',
+    logging.basicConfig(filename=log_file, level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S', filemode='w',
                         format='%(asctime)s | %(name)s | %(levelname)s | %(message)s')
-    glogger = logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)
 else:
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S',
                         format='%(asctime)s | %(name)s | %(levelname)s | %(message)s')
-    glogger = logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)
 
-glogger.info("\n=======================================\n\n")
-glogger.info("Global logging initialized!")
-glogger.info("local = {}".format(local))
-# print("local = {}".format(local))
-
+logger.setLevel(logging.DEBUG)
+logger.info("\n=======================================\n\n")
+logger.info("Global logging initialized!  Level: Debug")
+logger.info(f"Logging level: {logger.getEffectiveLevel()}")
+logger.info(f"local = {local}")
+# print(f"local = {local}")

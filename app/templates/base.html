@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-dark bg-dark">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapsed" aria-expanded="false">
@@ -29,7 +29,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">BIF Central</a>
+            <a class="navbar-brand" href="{{ url_for('main.browse') }}">BIF Central</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -37,16 +37,13 @@
             <ul class="nav navbar-nav">
                 <!-- For recipe dropdown: https://getbootstrap.com/docs/3.3/components/#navbar-default -->
                 <li>
-                    <a href="{{ url_for('main.browse_bifs') }}">Browse BIFs</a>
+                    <a href="{{ url_for('main.browse') }}">Browse BIFs</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('main.scrape') }}">Scrape A Thread</a>
+                    <a href="{{ url_for('main.scrape_new_thread') }}">Scrape New Thread</a>
                 </li>
 	            <li>
-                    <a href="{{ url_for('main.aggregate') }}">Aggregate Posts</a>
-                </li>
-	            <li>
-                    <a href="{{ url_for('main.view_stats') }}">View Stats</a>
+                    <a href="{{ url_for('main.browse') }}">View Stats</a>
                 </li>
             </ul>
         </div>
@@ -62,7 +59,7 @@
         {% endif %}
     {% endwith %}
 
-    {% block breadapp_content %}
+    {% block bif_content %}
     {% endblock %}
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 {% endblock %}

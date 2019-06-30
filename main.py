@@ -1,16 +1,26 @@
-from global_logger import glogger, local
-import logging
+from global_logger import logger, local
+from config import Config
 from flask import Flask
+import boto3
+
+# Use the local dynamodb connection when running locally
+if local:
+    db = boto3.resource('dynamodb', region_name=Config.aws_region, aws_access_key_id=Config.aws_access_key_id,
+                        aws_secret_access_key=Config.aws_secret_access_key, endpoint_url='http://localhost:8008')
+    logger.info("Using local DynamoDB")
+else:
+    db = boto3.resource('dynamodb', region_name=Config.aws_region, aws_access_key_id=Config.aws_access_key_id,
+                        aws_secret_access_key=Config.aws_secret_access_key)
+    logger.info("Using cloud DynamoDB")
+
 app = Flask(__name__)
 
-logger = glogger
-logger.setLevel(logging.INFO)
 
-
-@app.route('/')
+@app.route('/hello')
 def hello_world():
     return 'Hello World!'
 
 
-if __name__ == '__main__':
-    app.run()
+# if local:  # if __name__ == '__main__':
+#     app.run(host='localhost', port=8800, debug=True)
+#     logger.info("Running locally!")

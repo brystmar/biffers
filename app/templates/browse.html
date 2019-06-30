@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block bif_content %}
+    <div class="container-fluid" id="bif_list">
+        <p><h1>{{ bif_selection['name'] }}</h1>
+        <p></p>
+
+        <form id="form_bif_selection" action="" method="POST">
+            {{ bif_selection.hidden_tag() }}
+            {{ bif_selection.selector(size=bif_selection.selector.choices|length) }}<br>
+        </form>
+
+        <form id="form_scrape_existing_thread" action="" method="POST">
+            {{ scrape_existing_thread_button.hidden_tag() }}
+            {{ scrape_existing_thread_button['scrape'] }}
+        </form>
+
+        <form id="form_update_likes" action="" method="POST">
+            {{ likes_button.hidden_tag() }}
+            {{ likes_button['update_likes'] }}
+        </form>
+
+        <form id="form_custom_output" action="" method="POST">
+            {{ output_button.hidden_tag() }}
+            {{ output_button['custom_output'] }}
+        </form>
+
+    </div>
+
+{% endblock %}
