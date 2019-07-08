@@ -2,10 +2,17 @@
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
     <data-source source="LOCAL" name="AWS RDS (bifapp)" uuid="a75ac311-ff85-466d-86af-e9ff587e0e72">
-      <driver-ref>java.sql.Driver</driver-ref>
+      <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>com.amazon.redshift.jdbc42.Driver</jdbc-driver>
-      <jdbc-url>trivialib.cekefmupxfvf.us-west-2.rds.amazonaws.com</jdbc-url>
+      <schema-control>AUTOMATIC</schema-control>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://trivialib.cekefmupxfvf.us-west-2.rds.amazonaws.com:5432/bifs</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="GCP: trivialib" uuid="f2923602-4e18-4eb4-bda5-5f7f2483e14d">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://35.235.119.195:5432/bifs</jdbc-url>
     </data-source>
   </component>
 </project>

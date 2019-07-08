@@ -12,14 +12,14 @@ class Config(object):
         apply_env()
         logger.info("Applied .env variables using env_tools")
 
-        # AWS Credentials #
+        # AWS Credentials
         aws_account_id = environ.get('AWS_ACCOUNT_ID')
-        aws_access_key_id = environ.get('AWS_ACCESS_KEY')
+        aws_access_key = environ.get('AWS_ACCESS_KEY')
         aws_secret_access_key = environ.get('AWS_SECRET_ACCESS_KEY')
-        aws_user = environ.get('AWS_USER')
         aws_region = environ.get('AWS_REGION')
-        aws_arn = environ.get('AWS_ARN')
-        aws_s3_bucket = environ.get('AWS_S3_BUCKET')
+        # aws_user = environ.get('AWS_USER')
+        # aws_arn = environ.get('AWS_ARN')
+        # aws_s3_bucket = environ.get('AWS_S3_BUCKET')
 
         SECRET_KEY = environ.get('SECRET_KEY') or '1ASDFKwekeapoij4o844ORKW#k2-093iedd'
 
@@ -32,14 +32,14 @@ class Config(object):
         fire = firestore.Client().from_service_account_json('biffers-prod.json')
         fire_credentials = fire.collection('environment_vars').document('prod').get()
 
-        # AWS Credentials #
+        # AWS Credentials
         aws_account_id = fire_credentials._data['AWS_ACCOUNT_ID']
-        aws_access_key_id = fire_credentials._data['AWS_ACCESS_KEY']
+        aws_access_key = fire_credentials._data['AWS_ACCESS_KEY']
         aws_secret_access_key = fire_credentials._data['AWS_SECRET_ACCESS_KEY']
-        aws_user = fire_credentials._data['AWS_USER']
         aws_region = fire_credentials._data['AWS_REGION']
-        aws_arn = fire_credentials._data['AWS_ARN']
-        aws_s3_bucket = fire_credentials._data['AWS_S3_BUCKET']
+        # aws_user = fire_credentials._data['AWS_USER']
+        # aws_arn = fire_credentials._data['AWS_ARN']
+        # aws_s3_bucket = fire_credentials._data['AWS_S3_BUCKET']
 
         SECRET_KEY = fire_credentials._data['SECRET_KEY'] or '2ASDFKwekeapoij4o844ORKW#k2-093iedd'
 

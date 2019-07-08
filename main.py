@@ -5,11 +5,11 @@ import boto3
 
 # Use the local dynamodb connection when running locally
 if local:
-    db = boto3.resource('dynamodb', region_name=Config.aws_region, aws_access_key_id=Config.aws_access_key_id,
+    db = boto3.resource('dynamodb', region_name=Config.aws_region, aws_access_key_id=Config.aws_access_key,
                         aws_secret_access_key=Config.aws_secret_access_key, endpoint_url='http://localhost:8008')
     logger.info("Using local DynamoDB")
 else:
-    db = boto3.resource('dynamodb', region_name=Config.aws_region, aws_access_key_id=Config.aws_access_key_id,
+    db = boto3.resource('dynamodb', region_name=Config.aws_region, aws_access_key_id=Config.aws_access_key,
                         aws_secret_access_key=Config.aws_secret_access_key)
     logger.info("Using cloud DynamoDB")
 

@@ -135,6 +135,7 @@ class URLs(SysMixin, Base):
     user_page = Column(String, primary_key=True)
     gdrive = Column(String, primary_key=True)
     login = Column(String, primary_key=True)
+    likes = Column(String, primary_key=True)
 
     def __repr__(self):
         return "<URL>"

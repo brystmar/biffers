@@ -1,8 +1,11 @@
 from app import logger
 from app.main import bp
-from app.main.forms import BifSelector, ScrapeExistingThread, UpdateLikes, CustomOutput
+from app.main.forms import BifSelector, ScrapeNewThread, ScrapeExistingThread, UpdateLikes, CustomOutput
 from flask import render_template, redirect, url_for, request, send_from_directory
+from main import db
 import boto3
+
+URLs = None
 
 
 @bp.route('/')
@@ -10,17 +13,15 @@ import boto3
 @bp.route('/browse', methods=['GET', 'POST'])
 def browse():
     logger.debug("Start of browse()")
-    bif_data = [dict(name="SSF002", ongoing=0, start_date="2012-02-04", end_date="2012-05-28",
-                     url="http://www.talkbeer.com/SSF002", organizer_id=229),
-                dict(name="SSF001", ongoing=0, start_date="2011-01-23", end_date="2011-04-19",
-                     url="http://www.talkbeer.com/SSF001", organizer_id=37),
-                dict(name="SSF003", ongoing=1, start_date="2013-09-17", end_date="2013-12-14",
-                     url="http://www.talkbeer.com/SSF003", organizer_id=2051)
-                ]
 
+    # Retrieve all known threads from the database
+    threads = scan_table('biffers_thread')
+
+    bifs = to_choices_list(threads)
     bif_selection = BifSelector()
-    bif_selection.selector.choices = to_choices_list(bif_data)
+    bif_selection.selector.choices = bifs
 
+    scrape_new_thread_form = ScrapeNewThread()
     scrape_existing_thread_form = ScrapeExistingThread()
     likes_form = UpdateLikes()
     output_form = CustomOutput()
@@ -34,7 +35,20 @@ def browse():
     elif scrape_new_thread_form.validate_on_submit():
         logger.debug("Clicked the ScrapeNewThread button")
 
-        scrape_new_thread(bif_selection.selector.data)
+        # VALIDATION #
+        # Desired thread name must be unique
+        if scrape_new_thread_form.thread_name.data.lower() in list_to_lowercase(bifs, 'name'):
+            logger.debug("Desired BIF name already exists")
+            return redirect(url_for("main.browse"))
+
+        # URL must also be unique
+        if scrape_new_thread_form.url.data.lower() in list_to_lowercase(bifs, 'url'):
+            logger.debug("Duplicate thread -- URL already exists")
+            return redirect(url_for("main.browse"))
+
+        # Gather the high-level thread details
+
+        scrape_new_thread(scrape_new_thread_form.thread_name.data, scrape_new_thread_form.url.data)
         return redirect(url_for("main.browse"))
 
     elif likes_form.validate_on_submit():
@@ -49,19 +63,52 @@ def browse():
         create_custom_html_output(bif_selection.selector.data)
         return redirect(url_for("main.browse"))
 
-    return render_template('browse.html', title='Browse TalkBeer BIFs', bif_data=bif_data, bif_selection=bif_selection,
-                           scrape_existing_thread_button=scrape_existing_thread_form, likes_button=likes_form,
-                           output_button=output_form)
+    return render_template('browse.html', title='Browse TalkBeer BIFs', bif_data=threads,
+                           bif_selection=bif_selection, scrape_existing_thread_button=scrape_existing_thread_form,
+                           likes_button=likes_form, output_button=output_form)
+
+
+def scan_table(table) -> list:
+    """Scan the requested table, log response info as needed, return the data."""
+    response = db.Table(table).scan()
+
+    # Check the response code
+    response_code = response['ResponseMetadata']['HTTPStatusCode']
+    logger.debug(f"Scanned the {table} table, HTTPStatusCode={response_code}")
+    if response_code == 200:
+        logger.debug(f"{response['Count']} threads returned from dynamodb")
+    else:
+        logger.warning(f"DynamoDB error: HTTPStatusCode={response_code}")
+        logger.warning(f"Full response log:\n{response['ResponseMetadata']}")
+    return response['Items']
 
 
 def to_choices_list(data) -> list:
     """Return a sorted list of key/value tuples that identifies each BIF."""
     sorted_list = []
+    other_bifs = []
     for d in data:
-        sorted_list.append((d['name'], d['name']))
+        # Keep the SSF BIFs at the top
+        if 'ssf' in d['name'].lower():
+            sorted_list.append((d['name'], d['name']))
+        else:
+            other_bifs.append((d['name'], d['name']))
 
     sorted_list.sort()
+    other_bifs.sort()
+
+    for o in other_bifs:
+        sorted_list.append(o)
+
     return sorted_list
+
+
+def list_to_lowercase(data, key) -> list:
+    """Return a sorted list of key/value tuples that identifies each BIF."""
+    lower_list = []
+    for d in data:
+        lower_list.append(d[key].lower())
+    return lower_list
 
 
 def scrape_existing_thread(thread_name):
@@ -72,9 +119,11 @@ def scrape_existing_thread(thread_name):
 
 
 @bp.route('/scrape_new_thread')
-def scrape_new_thread(thread_name="abc"):
+def scrape_new_thread(thread_name, url):
     """Scrape data for a thread that isn't already in our database."""
-    logger.debug(f"Start of scrape_new_thread for {thread_name}")
+    logger.debug(f"Start of scrape_new_thread for {thread_name}, {url}")
+
+    # URL Validation
 
     # TODO: write this function, then hand it off to scrape_existing_thread()
     logger.debug("Now that the thread exists in our db, hand it off to scrape_existing_thread()")
