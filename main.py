@@ -21,6 +21,7 @@ def hello_world():
     return 'Hello World!'
 
 
-# if local:  # if __name__ == '__main__':
-#     app.run(host='localhost', port=8800, debug=True)
-#     logger.info("Running locally!")
+if local:  # if __name__ == '__main__':
+    app.run(host='localhost', port=5000, debug=True)
+    print("Running locally via __main__: http://localhost:5000")
+    logger.info("Running locally via __main__: http://localhost:5000")

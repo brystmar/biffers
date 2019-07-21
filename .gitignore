@@ -1,15 +1,17 @@
-*.sqlite
-*.db
-
-.env
-__pycache__/
-.git/
-_mac/
+**/logs/
 logs/
 venv/
+.env
+.git/
+_mac/
+**/__pycache__/
+__pycache__/
+*.db
+*.sqlite
 *.log
 */tbcred.py
 tbcred.py
+biffers-prod.json
 
 
 # Created by https://www.gitignore.io/api/venv,macos,pycharm
