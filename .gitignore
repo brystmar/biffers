@@ -1,18 +1,21 @@
-**/logs/
+.git/
 logs/
 venv/
-.env
-.git/
-_mac/
+app/creds.py
+**/creds.py
 **/__pycache__/
 __pycache__/
+*.env
+.env
+env_variables.yaml
 *.db
 *.sqlite
 *.log
 */tbcred.py
 tbcred.py
-biffers-prod.json
-
+.aws/*
+.boto
+.boto/*
 
 # Created by https://www.gitignore.io/api/venv,macos,pycharm
 # Edit at https://www.gitignore.io/?templates=venv,macos,pycharm
@@ -139,3 +142,4 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/venv,macos,pycharm
+/.aws/*
